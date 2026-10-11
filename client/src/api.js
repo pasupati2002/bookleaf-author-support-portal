@@ -1,3 +1,5 @@
+const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+
 export async function api(path, method = 'GET', body) {
   const isFormData = body instanceof FormData;
 
@@ -11,7 +13,9 @@ export async function api(path, method = 'GET', body) {
     headers['Content-Type'] = 'application/json';
   }
 
-  const response = await fetch('/api' + path, {
+  const normalizedPath = path.startsWith('/') ? path : '/' + path;
+
+  const response = await fetch(API_BASE_URL + '/api' + normalizedPath, {
     method,
     headers,
     body: body
