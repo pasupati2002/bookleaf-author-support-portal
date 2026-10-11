@@ -580,9 +580,29 @@ app.get('/api/admin/tickets', auth, adminOnly, async (req, res) => {
       filter.category = req.query.category;
     }
 
-    const tickets = await Ticket.find(filter)
-      .sort({ updatedAt: -1 })
-      .populate('assignedTo', 'name email');
+const tickets = await Ticket.find(filter)
+  .populate('assignedTo', 'name email')
+  .lean();
+
+const priorityOrder = {
+  Critical: 0,
+  High: 1,
+  Medium: 2,
+  Low: 3,
+};
+
+tickets.sort((a, b) => {
+  const priorityDifference =
+    (priorityOrder[a.priority] ?? 4) -
+    (priorityOrder[b.priority] ?? 4);
+
+  if (priorityDifference !== 0) {
+    return priorityDifference;
+  }
+
+  return new Date(a.createdAt) - new Date(b.createdAt);
+});
+
 
     res.json(tickets);
   } catch (error) {

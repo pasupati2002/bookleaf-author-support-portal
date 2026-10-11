@@ -107,7 +107,6 @@ Example request:
 
 | Method | Endpoint | Access | Purpose |
 |---|---|---|---|
-| POST | `/api/tickets` | Author | Create a ticket; optionally include a book ID and attachment |
 | GET | `/api/tickets` | Authenticated | List tickets; authors see their own tickets |
 | GET | `/api/tickets/:id` | Authenticated | Get ticket details and conversation |
 | PATCH | `/api/tickets/:id` | Admin | Update ticket status, category, priority, or assignee |
@@ -150,6 +149,7 @@ The application uses Ollama with the `llama3.2:3b` model for ticket classificati
 
 AI-generated replies should be reviewed by an administrator before being sent to an author. The system should avoid inventing policy details, royalty amounts, payment dates, or production information when those details are unavailable.
 
+The AI provider is selected through server-side environment configuration. Local Ollama inference is the preferred zero-per-request-cost option for development. A hosted AI provider may incur charges, so it should only be enabled deliberately. If classification fails, ticket creation continues with fallback values; if reply drafting fails, the administrator should write a response manually. All AI-generated replies must be reviewed before being sent.
 ## Security Notes
 
 - Keep environment files and API credentials out of version control.
